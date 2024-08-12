@@ -15,6 +15,9 @@ jobs:
       packages: write
       pull-requests: write
     steps:
+      - name: Git config
+        run: git config --global core.autocrlf input
+      
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
@@ -22,9 +25,25 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
-
+      
+      - name: Get npm cache directory
+        id: npm-cache-dir
+        shell: bash
+        run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+      
+      - uses: actions/cache@v4
+        id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ steps.npm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      
       - name: Install Dependencies
-        run: npm ci
+        run: |
+          npm ci
+          git status --porcelain
+          git diff HEAD
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
@@ -32,6 +51,7 @@ jobs:
         with:
           commit: "Chore: Version Packages"
           publish: npm run publish
+          version: npm run version && npm ci
           setupGitUser: true
           createGithubReleases: true
         env:

@@ -6,8 +6,10 @@ import * as packageJson from './package.json';
 import { FLOW_FILENAME, getJsonAsync, questionAsync, spawnAsync, TYPESCRIPT_FILENAME, writeFileAsync } from './utils';
 
 async function update() {
-  if ((await spawnAsync('git', 'status', '--porcelain')) !== '') {
+  const result = await spawnAsync('git', 'status', '--porcelain');
+  if (result !== '') {
     console.error('Your working directory needs to be clean!');
+    console.log(`output: ${result}`);
     process.exit(1);
   }
 
