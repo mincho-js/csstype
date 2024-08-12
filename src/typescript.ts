@@ -64,6 +64,11 @@ export default async function typescript() {
   const disableAutoExport = 'export {};' + EOL;
 
   const propertyValue =
+    'export type NonNullableString = Omit<string & NonNullable<unknown>, keyof string>;' +
+    EOL +
+    'export type NonNullableNumber = Omit<number & NonNullable<unknown>, keyof number>;' +
+    EOL +
+    EOL +
     'export type PropertyValue<TValue> = TValue extends Array<infer AValue> ? Array<' +
     'AValue extends infer TUnpacked & {} ? TUnpacked : AValue' +
     '> : ' +
@@ -158,21 +163,21 @@ function stringifyTypes(
     .reduce<string[]>((unions, type) => {
       if (type.type === Type.String) {
         if (!hasUnionString) {
-          unions.push(applyAutocompleteHack ? `(${stringOutput} & {})` : stringOutput);
+          unions.push(applyAutocompleteHack ? `(NonNullableString)` : stringOutput);
           hasUnionString = true;
         }
       } else if (type.type === Type.Number) {
-        unions.push(applyAutocompleteHack ? `(${numberOutput} & {})` : numberOutput);
+        unions.push(applyAutocompleteHack ? `(NonNullableNumber)` : numberOutput);
 
         if (!hasUnionString) {
-          unions.push(applyAutocompleteHack ? `(${stringOutput} & {})` : stringOutput);
+          unions.push(applyAutocompleteHack ? `(NonNullableString)` : stringOutput);
           hasUnionString = true;
         }
       } else if (type.type === Type.NumericLiteral) {
         unions.push(stringifyType(type));
 
         if (!hasUnionString) {
-          unions.push(applyAutocompleteHack ? `(${stringOutput} & {})` : stringOutput);
+          unions.push(applyAutocompleteHack ? `(NonNullableString)` : stringOutput);
           hasUnionString = true;
         }
       } else {
