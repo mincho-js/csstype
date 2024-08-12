@@ -1,5 +1,5 @@
 ---
-'@mincho-js/csstype': patch
+"@mincho-js/csstype": patch
 ---
 
 - Replace `string & {}` to NonNullableString
