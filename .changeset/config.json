@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/@changesets/config@3.0.2/schema.json",
   "changelog": [
     "@changesets/changelog-github",
-    { "repo": "mincho-js/csstype " }
+    { "repo": "mincho-js/csstype" }
   ],
   "commit": false,
   "fixed": [],
